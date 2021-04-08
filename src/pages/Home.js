@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 //Style and Animation
 import styled from "styled-components";
 import { motion, AnimatePresence, AnimateSharedLayout } from "framer-motion";
+import { fadeIn } from "../animations";
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 import { loadGames } from "../actions/gamesAction";
@@ -23,15 +24,35 @@ const Home = () => {
 
   //Deconstruct the updated state from the rootReducer in reducers/index.js
   //useSelector allows you to extract data from the Redux store state
-  const { popular, newGames, upcoming } = useSelector((state) => state.games);
+  const { popular, newGames, upcoming, searched } = useSelector(
+    (state) => state.games
+  );
   return (
     // GameList and Games are styled DIVs, Game is a component
-    <GameList>
+    <GameList variants={fadeIn} initial="hidden" animate="show">
       <AnimateSharedLayout type="crossfade">
         {/* wrap the component that you want to transition to in AnimatePresence, make sure it has a toggle*/}
         <AnimatePresence>
           {pathId && <GameDetail pathId={pathId} />}
         </AnimatePresence>
+
+        {searched.length[0] && (
+          <div className="searched">
+            <h2>Searched Games</h2>
+            <Games>
+              {searched.map((game) => (
+                <Game
+                  name={game.name}
+                  released={game.released}
+                  id={game.id}
+                  image={game.background_image}
+                  key={game.id}
+                />
+              ))}
+            </Games>
+          </div>
+        )}
+
         <h2>Upcoming Games</h2>
         <Games>
           {upcoming.map((game) => (
